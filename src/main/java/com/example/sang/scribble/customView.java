@@ -24,6 +24,9 @@ public class customView extends View {
     private float brushSize,lastBrushSize;
 
     private ArrayList<Path> paths = new ArrayList<Path>();
+    private ArrayList<Path> undonePaths = new ArrayList<Path>();
+    private float mX, mY;
+    private static final float TOUCH_TOLERANCE = 4;
 
     private  void init(){
         brushSize=getResources().getInteger(R.integer.medium_size);
@@ -65,25 +68,49 @@ public class customView extends View {
 
       switch (motionEvent.getAction()) {
           case MotionEvent.ACTION_DOWN:
-              drawPath.moveTo(touchX, touchY);
+              touch_start(touchX, touchY);
+              invalidate();
               break;
 
           case MotionEvent.ACTION_MOVE:
-              drawPath.lineTo(touchX, touchY);
+              touch_move(touchX,touchY);
+              invalidate();
               break;
 
           case MotionEvent.ACTION_UP:
-              drawPath.lineTo(touchX, touchY);
-              drawCanvas.drawPath(drawPath, drawPaint);
-              drawPath.reset();
-              //drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
+              touch_up();
+              invalidate();
               break;
 
               default:
                   return false;
       }
-        invalidate();
+        //invalidate();
         return true;
+    }
+    public void touch_start(float x, float y){
+        undonePaths.clear();
+        drawPath.reset();
+        drawPath.moveTo(x, y);
+        mX = x;
+        mY = y;
+    }
+    private void touch_up() {
+        drawPath.lineTo(mX, mY);
+        drawCanvas.drawPath(drawPath, drawPaint);
+        paths.add(drawPath);
+        drawPath = new Path();
+
+    }
+
+    private void touch_move(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            drawPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            mX = x;
+            mY = y;
+        }
     }
 
     public customView(Context context, @Nullable AttributeSet attrs) {
