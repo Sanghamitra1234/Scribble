@@ -3,6 +3,7 @@ package com.example.sang.scribble;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -111,6 +112,20 @@ public class customView extends View {
             mX = x;
             mY = y;
         }
+    }
+    public void onClickUndo () {
+        if (paths.size()>0)
+        {
+            undonePaths.add(paths.remove(paths.size()-1));
+            invalidate();
+        }
+
+    }
+    public void eraseAll() {
+        drawPath = new Path();
+        paths.clear();
+        drawCanvas.drawColor(Color.WHITE);
+        invalidate();
     }
 
     public customView(Context context, @Nullable AttributeSet attrs) {
