@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void openColorPicker(){
         final ColorPicker colorPicker=new ColorPicker(this);
-        ArrayList<String> colors=new ArrayList<>();
+        final ArrayList<String> colors=new ArrayList<>();
         colors.add("#258174");
         colors.add("#3C8D2F");
         colors.add("#20724F");
@@ -113,9 +114,7 @@ public class MainActivity extends AppCompatActivity {
         colorPicker.setRoundColorButton(true).setColumns(5).setDefaultColorButton(Color.parseColor("#f84c44")).setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
             @Override
             public void onChooseColor(int position,int color) {
-                Intent intent = new Intent(getApplicationContext(), com.example.sang.scribble.customView.class);
-                intent.putExtra("paint", color);
-                startActivity(intent);
+                customView.setPaintColor(color);
             }
 
             @Override
