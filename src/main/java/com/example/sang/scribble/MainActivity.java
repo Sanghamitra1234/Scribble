@@ -2,6 +2,8 @@ package com.example.sang.scribble;
 
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -15,6 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
+
+import petrov.kristiyan.colorpicker.ColorPicker;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_undo:
                 customView.onClickUndo();
                 break;
+            case R.id.action_color:
+                    openColorPicker();
+                    break;
+
 
         }
     }
@@ -82,6 +91,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         deleteDialog.show();
+    }
+    private void openColorPicker(){
+        final ColorPicker colorPicker=new ColorPicker(this);
+        ArrayList<String> colors=new ArrayList<>();
+        colors.add("#258174");
+        colors.add("#3C8D2F");
+        colors.add("#20724F");
+        colors.add("#6a3ab2");
+        colors.add("#323299");
+        colors.add("#800080");
+        colors.add("#b79716");
+        colors.add("#966d37");
+        colors.add("#b77231");
+        colors.add("#808000");
+
+        colorPicker.setRoundColorButton(true).setColumns(5).setDefaultColorButton(Color.parseColor("#f84c44")).setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
+            @Override
+            public void onChooseColor(int position,int color) {
+                Intent intent = new Intent(getApplicationContext(), com.example.sang.scribble.customView.class);
+                intent.putExtra("paint", color);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancel(){
+            }
+        }).show();
+
     }
 
 }
