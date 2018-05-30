@@ -1,6 +1,7 @@
 package com.example.sang.scribble;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -19,7 +20,7 @@ public class customView extends View {
     private Path drawPath;
     private Paint drawPaint;
     private Paint canvasPaint;
-    private int paintColor = 0xFF660000;
+    public int paintColor ;
     private Canvas drawCanvas;
     private Bitmap canvasBitmap;
     private float brushSize,lastBrushSize;
@@ -29,7 +30,9 @@ public class customView extends View {
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 4;
 
-    private  void init(){
+    public   void init(){
+       Intent intent=new Intent();
+       paintColor=intent.getIntExtra("Paint",0xFF660000);
         brushSize=getResources().getInteger(R.integer.medium_size);
         lastBrushSize=brushSize;
 

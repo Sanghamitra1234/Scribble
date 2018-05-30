@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -21,10 +22,13 @@ import java.util.ArrayList;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
+import static com.example.sang.scribble.R.menu.menu_action;
+
 
 public class MainActivity extends AppCompatActivity {
-    private BottomNavigationView bottomNavigationView;
+    //private BottomNavigationView bottomNavigationView;
     private Toolbar mToolbar_bottom;
+    private Toolbar toolbar;
     private customView customView;
 
     public MainActivity() {
@@ -36,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mToolbar_bottom=findViewById(R.id.toolbar_bottom);
+         mToolbar_bottom=findViewById(R.id.toolbar_bottom);
+         //toolbar=findViewById(R.id.m_toolbarUp);
          customView = findViewById(R.id.custom_view);
-       // mToolbar_bottom.setOverflowIcon(ContextCompat.getDrawable(this, R.drawable.ic_dots_vertical_white_24dp));
 
         mToolbar_bottom.inflateMenu(R.menu.menu);
         mToolbar_bottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     private void handleDrawingIconTouched(int itemId) {
@@ -61,14 +66,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_color:
                     openColorPicker();
                     break;
-
+            case R.id.action_save:
+                save();
+                break;
 
         }
     }
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -119,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }).show();
 
+    }
+    private void save(){
+        
     }
 
 }

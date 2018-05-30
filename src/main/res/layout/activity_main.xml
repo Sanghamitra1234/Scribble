@@ -11,7 +11,7 @@
     tools:ignore="NamespaceTypo">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_layout"
+        android:id="@+id/m_toolbarUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay" />
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="454dp"
         android:layout_above="@+id/toolbar_bottom"
-        android:layout_below="@+id/app_bar_layout"
+        android:layout_below="@+id/m_toolbarUp"
         android:layout_marginTop="0dp" />
 
     <android.support.v7.widget.Toolbar
