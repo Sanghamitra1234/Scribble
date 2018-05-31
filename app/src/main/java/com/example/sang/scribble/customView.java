@@ -3,6 +3,7 @@ package com.example.sang.scribble;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,8 +21,9 @@ public class customView extends View {
     private Path drawPath;
     private Paint drawPaint;
     private Paint canvasPaint;
-    public int paintColor;
+    public int paintColor,prev_paintColor;
     private Canvas drawCanvas;
+    private boolean erase=false;
     private Bitmap canvasBitmap;
     private float brushSize, lastBrushSize;
 
@@ -34,6 +36,7 @@ public class customView extends View {
         paintColor = 0xFF660000;
         brushSize = getResources().getInteger(R.integer.medium_size);
         lastBrushSize = brushSize;
+        prev_paintColor=paintColor;
 
         drawPath = new Path();
         drawPaint = new Paint();
@@ -47,13 +50,15 @@ public class customView extends View {
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
 
+
+
     }
 
     protected void onDraw(Canvas canvas) {
-        for (Path p : paths) {
-            canvas.drawPath(p, drawPaint);
-        }
+
+        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+
 
     }
 
@@ -129,19 +134,24 @@ public class customView extends View {
 
     }
 
+
+
     public void eraseAll() {
+
         drawPath = new Path();
         paths.clear();
         drawCanvas.drawColor(Color.WHITE);
         invalidate();
+
     }
 
     public void setPaintColor(int color) {
-        paintColor = color;
-        drawPaint.setColor(paintColor);
-    }
 
-    public customView(Context context, @Nullable AttributeSet attrs) {
+       this.drawPaint.setColor(color);
+       this.paintColor=color;
+        //canvasPaint.setColor(paintColor);
+    }
+   public customView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
