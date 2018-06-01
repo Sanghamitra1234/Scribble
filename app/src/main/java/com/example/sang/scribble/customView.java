@@ -113,7 +113,7 @@ public class customView extends View {
         drawCanvas.drawPath(drawPath, drawPaint);
         paths.add(drawPath);
         drawPath = new Path();
-
+        //eraseAll(false);
     }
 
     private void touch_move(float x, float y) {
@@ -136,13 +136,11 @@ public class customView extends View {
 
 
 
-    public void eraseAll() {
+    public void eraseAll(boolean isErase) {
+        if(isErase)
+           drawPaint.setColor(Color.WHITE);
 
-        drawPath = new Path();
-        paths.clear();
-        drawCanvas.drawColor(Color.WHITE);
         invalidate();
-
     }
 
     public void setPaintColor(int color) {
