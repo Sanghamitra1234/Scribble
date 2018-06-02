@@ -4,14 +4,19 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,12 +25,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
@@ -48,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         mToolbar_bottom=findViewById(R.id.toolbar_bottom);
-         //toolbar=findViewById(R.id.m_toolbarUp);
-         customView = findViewById(R.id.custom_view);
+        mToolbar_bottom = findViewById(R.id.toolbar_bottom);
+        //toolbar=findViewById(R.id.m_toolbarUp);
+        customView = findViewById(R.id.custom_view);
 
         mToolbar_bottom.inflateMenu(R.menu.menu);
         mToolbar_bottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -64,23 +71,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleDrawingIconTouched(int itemId) {
-        switch (itemId){
+        switch (itemId) {
             case R.id.action_delete:
                 deleteDialog();
                 break;
             case R.id.action_erase:
-                int count=0;
+                int count = 0;
                 count++;
-                if(count%2==0)
-                   customView.eraseAll(false);
+                if (count % 2 == 0)
+                    customView.eraseAll(false);
                 else
                     customView.eraseAll(true);
                 break;
             case R.id.action_color:
-                    openColorPicker();
-                    break;
+                openColorPicker();
+                break;
             case R.id.action_save:
                 saveThisDrawing();
+                break;
+            case R.id.action_share:
+                shareDrawing();
                 break;
 
         }
@@ -92,12 +102,13 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    private void deleteDialog(){
+
+    private void deleteDialog() {
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(this);
         deleteDialog.setTitle(getString(R.string.delete_drawing));
         deleteDialog.setMessage(getString(R.string.new_drawing_warning));
-        deleteDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
+        deleteDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 customView.eraseAll(true);
                 dialog.dismiss();
             }
@@ -109,9 +120,10 @@ public class MainActivity extends AppCompatActivity {
         });
         deleteDialog.show();
     }
-    private void openColorPicker(){
-        final ColorPicker colorPicker=new ColorPicker(this);
-        final ArrayList<String> colors=new ArrayList<>();
+
+    private void openColorPicker() {
+        final ColorPicker colorPicker = new ColorPicker(this);
+        final ArrayList<String> colors = new ArrayList<>();
         colors.add("#258180");
         colors.add("#3C8D2F");
         colors.add("#20724F");
@@ -123,31 +135,32 @@ public class MainActivity extends AppCompatActivity {
         colors.add("#b77231");
         colors.add("#808000");
 
-        colorPicker.setRoundColorButton(true).setColumns(5).setColorButtonTickColor( Color.parseColor("#f8f8ff")).setDefaultColorButton(Color.parseColor("#f84c44")).setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
+        colorPicker.setRoundColorButton(true).setColumns(5).setColorButtonTickColor(Color.parseColor("#f8f8ff")).setDefaultColorButton(Color.parseColor("#f84c44")).setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
             @Override
-            public void onChooseColor(int position,int color) {
+            public void onChooseColor(int position, int color) {
                 customView.setPaintColor(color);
-               // customView.setPrev_paintColor(color);
+                // customView.setPrev_paintColor(color);
             }
 
             @Override
-            public void onCancel(){
+            public void onCancel() {
             }
         }).show();
 
     }
-    public void saveDrawingDialog(){
+
+    public void saveDrawingDialog() {
         //save drawing attach to Notification Bar and let User Open Image to share.
         AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
         saveDialog.setTitle("Save drawing");
         saveDialog.setMessage("Save drawing to device Gallery?");
-        saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
+        saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 saveThisDrawing();
             }
         });
-        saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
+        saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -202,4 +215,44 @@ public class MainActivity extends AppCompatActivity {
 
         customView.destroyDrawingCache();
     }
+
+    private void shareDrawing() {
+        customView.setDrawingCacheEnabled(true);
+        customView.invalidate();
+
+        Bitmap bitmap = Bitmap.createBitmap(customView.getWidth(), customView.getHeight(), Bitmap.Config.RGB_565);
+        customView.draw(new Canvas(bitmap));
+
+        try {
+
+            File cachePath = new File(getCacheDir(), "images");
+            cachePath.mkdirs();
+            FileOutputStream stream = new FileOutputStream(cachePath + "/image.jpg"); // overwrites this image every time
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        File imagePath = new File(this.getCacheDir(), "images");
+        File newFile = new File(imagePath, "image.jpg");
+        Uri contentUri = FileProvider.getUriForFile(this, "com.example.sang.scribble.fileprovider", newFile);
+
+
+        if (contentUri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setType("image/*");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+            shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+        }
+
+    }
 }
+
+
+
+
