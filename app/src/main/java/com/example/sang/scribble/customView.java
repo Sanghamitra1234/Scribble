@@ -141,8 +141,17 @@ public class customView extends View {
     }
 
 
+    public void eraseAll() {
 
-    public void eraseAll(boolean isErase) {
+        drawPath = new Path();
+        paths.clear();
+        drawCanvas.drawColor(Color.WHITE);
+        invalidate();
+    }
+
+
+
+    public void erase(boolean isErase) {
         if(isErase)
            drawPaint.setColor(Color.WHITE);
 

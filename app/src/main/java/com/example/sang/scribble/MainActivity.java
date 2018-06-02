@@ -78,10 +78,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_erase:
                 int count = 0;
                 count++;
-                if (count % 2 == 0)
-                    customView.eraseAll(false);
-                else
-                    customView.eraseAll(true);
+                    customView.erase(true);
                 break;
             case R.id.action_color:
                 openColorPicker();
@@ -109,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         deleteDialog.setMessage(getString(R.string.new_drawing_warning));
         deleteDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                customView.eraseAll(true);
+                customView.eraseAll();
                 dialog.dismiss();
             }
         });
