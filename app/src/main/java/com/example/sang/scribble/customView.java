@@ -17,6 +17,7 @@ import android.support.v4.content.FileProvider;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,10 +63,17 @@ public class customView extends View {
 
     protected void onDraw(Canvas canvas) {
 
-        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+       canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
 
 
+    }
+
+    public void setPaintColor(int color) {
+
+        this.drawPaint.setColor(color);
+        this.paintColor=color;
+        //canvasPaint.setColor(paintColor);
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -135,7 +143,11 @@ public class customView extends View {
     public void onClickUndo() {
         if (paths.size() > 0) {
             undonePaths.add(paths.remove(paths.size() - 1));
+
             invalidate();
+        } else {
+            Toast.makeText(getContext(), "Undo unknown", Toast.LENGTH_SHORT)
+                    .show();
         }
 
     }
@@ -158,12 +170,9 @@ public class customView extends View {
         invalidate();
     }
 
-    public void setPaintColor(int color) {
 
-       this.drawPaint.setColor(color);
-       this.paintColor=color;
-        //canvasPaint.setColor(paintColor);
-    }
+
+
    public customView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();

@@ -1,6 +1,8 @@
 package com.example.sang.scribble;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +16,8 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -21,10 +25,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.PermissionRequest;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,8 +38,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
+
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -45,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar_bottom;
     private Toolbar toolbar;
     private customView customView;
+    Bitmap finalImage;
+    CoordinatorLayout coordinatorLayout;
 
     public MainActivity() {
     }
@@ -76,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 deleteDialog();
                 break;
             case R.id.action_erase:
-                int count = 0;
-                count++;
+
                     customView.erase(true);
                 break;
             case R.id.action_color:
@@ -87,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
                 saveThisDrawing();
                 break;
             case R.id.action_share:
-                shareDrawing();
+               // customView.onClickUndo();
+               shareDrawing();
                 break;
 
         }
@@ -164,54 +180,64 @@ public class MainActivity extends AppCompatActivity {
         saveDialog.show();
     }
 
-    public void saveThisDrawing() {
-        String path = Environment.getExternalStorageDirectory().toString();
-        path = path + "/" + getString(R.string.app_name);
-        File dir = new File(path);
-        //save drawing
-        customView.setDrawingCacheEnabled(true);
 
-        //attempt to save
-        String imTitle = "Drawing" + "_" + System.currentTimeMillis() + ".png";
-        String imgSaved = MediaStore.Images.Media.insertImage(
-                getContentResolver(), customView.getDrawingCache(),
-                imTitle, "a drawing");
 
-        try {
-            if (!dir.isDirectory() || !dir.exists()) {
-                dir.mkdirs();
-            }
+        private void saveThisDrawing() {
+
+
+            String path = Environment.getExternalStorageDirectory().toString();
+            path = path + "/" + getString(R.string.app_name);
+            File dir = new File(path);
+            //save drawing
             customView.setDrawingCacheEnabled(true);
-            File file = new File(dir, imTitle);
-            FileOutputStream fOut = new FileOutputStream(file);
-            Bitmap bm = customView.getDrawingCache();
-            bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+
+            //attempt to save
+            String imTitle = "Drawing" + "_" + System.currentTimeMillis() + ".png";
+            String imgSaved = MediaStore.Images.Media.insertImage(
+                    getContentResolver(), customView.getDrawingCache(),
+                    imTitle, "a drawing");
+
+            try {
+                if (!dir.isDirectory() || !dir.exists()) {
+                    dir.mkdirs();
+                }
+                customView.setDrawingCacheEnabled(true);
+                File file = new File(dir, imTitle);
+                FileOutputStream fOut = new FileOutputStream(file);
+                Bitmap bm = customView.getDrawingCache();
+                bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
 
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("Uh Oh!");
-            alert.setMessage("Oops! Image could not be saved. Do you have enough space in your device?1");
-            alert.setPositiveButton("OK", null);
-            alert.show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle("Uh Oh!");
+                alert.setMessage("Oops! Image could not be saved. Do you have enough space in your device?1");
+                alert.setPositiveButton("OK", null);
+                alert.show();
 
-        } catch (IOException e) {
-            Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                    "Oops! Image could not be saved. Do you have enough space in your device2?", Toast.LENGTH_SHORT);
-            unsavedToast.show();
-            e.printStackTrace();
+            } catch (IOException e) {
+                Toast unsavedToast = Toast.makeText(getApplicationContext(),
+                        "Oops! Image could not be saved. Do you have enough space in your device2?", Toast.LENGTH_SHORT);
+                unsavedToast.show();
+                e.printStackTrace();
+            }
+
+
+            if (imgSaved != null) {
+                Toast savedToast = Toast.makeText(getApplicationContext(),
+                        "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+                savedToast.show();
+            }
+
+            customView.destroyDrawingCache();
+
         }
 
 
-        if (imgSaved != null) {
-            Toast savedToast = Toast.makeText(getApplicationContext(),
-                    "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
-            savedToast.show();
-        }
 
-        customView.destroyDrawingCache();
-    }
+
+
 
     private void shareDrawing() {
         customView.setDrawingCacheEnabled(true);
@@ -248,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 }
 
 

@@ -20,9 +20,9 @@
         android:icon="@drawable/ic_delete_black_24dp"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_undo"
-        android:title="@string/action_undo"
-        android:icon="@drawable/ic_undo_black_24dp"
+        android:id="@+id/action_erase"
+        android:title="Erase"
+        android:icon="@drawable/ic_eraser_white_24dp"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_color"
