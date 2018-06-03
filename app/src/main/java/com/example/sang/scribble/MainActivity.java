@@ -31,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.PermissionRequest;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -71,16 +72,57 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mToolbar_bottom = findViewById(R.id.toolbar_bottom);
+        // mToolbar_bottom = findViewById(R.id.toolbar_bottom);
         //toolbar=findViewById(R.id.m_toolbarUp);
         customView = findViewById(R.id.custom_view);
 
-        mToolbar_bottom.inflateMenu(R.menu.menu);
+     /*   mToolbar_bottom.inflateMenu(R.menu.menu);
         mToolbar_bottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 handleDrawingIconTouched(item.getItemId());
                 return false;
+            }
+        });
+*/
+        setBottomBar();
+    }
+
+    private void setBottomBar() {
+        ImageButton ib_share, ib_save, ib_delete, ib_erase, ib_color;
+        ib_share = findViewById(R.id.ib_share);
+        ib_save = findViewById(R.id.ib_save);
+        ib_delete = findViewById(R.id.ib_delete);
+        ib_erase = findViewById(R.id.ib_erase);
+        ib_color = findViewById(R.id.ib_color);
+        ib_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareDrawing();
+            }
+        });
+        ib_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            checkSavePermission();
+            }
+        });
+        ib_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteDialog();
+            }
+        });
+        ib_erase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customView.erase(true);
+            }
+        });
+        ib_color.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openColorPicker();
             }
         });
 
@@ -93,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_erase:
 
-                    customView.erase(true);
+                customView.erase(true);
                 break;
             case R.id.action_color:
                 openColorPicker();
@@ -102,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
                 saveThisDrawing();
                 break;
             case R.id.action_share:
-               // customView.onClickUndo();
-               shareDrawing();
+                // customView.onClickUndo();
+                shareDrawing();
                 break;
 
         }
@@ -181,62 +223,69 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void saveThisDrawing() {
+        String path = Environment.getExternalStorageDirectory().toString();
+        path = path + "/" + getString(R.string.app_name);
+        File dir = new File(path);
+        //save drawing
+        customView.setDrawingCacheEnabled(true);
 
-        private void saveThisDrawing() {
+        //attempt to save
+        String imTitle = "Drawing" + "_" + System.currentTimeMillis() + ".png";
+        String imgSaved = MediaStore.Images.Media.insertImage(
+                getContentResolver(), customView.getDrawingCache(),
+                imTitle, "a drawing");
 
-
-            String path = Environment.getExternalStorageDirectory().toString();
-            path = path + "/" + getString(R.string.app_name);
-            File dir = new File(path);
-            //save drawing
+        try {
+            if (!dir.isDirectory() || !dir.exists()) {
+                dir.mkdirs();
+            }
             customView.setDrawingCacheEnabled(true);
-
-            //attempt to save
-            String imTitle = "Drawing" + "_" + System.currentTimeMillis() + ".png";
-            String imgSaved = MediaStore.Images.Media.insertImage(
-                    getContentResolver(), customView.getDrawingCache(),
-                    imTitle, "a drawing");
-
-            try {
-                if (!dir.isDirectory() || !dir.exists()) {
-                    dir.mkdirs();
-                }
-                customView.setDrawingCacheEnabled(true);
-                File file = new File(dir, imTitle);
-                FileOutputStream fOut = new FileOutputStream(file);
-                Bitmap bm = customView.getDrawingCache();
-                bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            File file = new File(dir, imTitle);
+            FileOutputStream fOut = new FileOutputStream(file);
+            Bitmap bm = customView.getDrawingCache();
+            bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
 
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setTitle("Uh Oh!");
-                alert.setMessage("Oops! Image could not be saved. Do you have enough space in your device?1");
-                alert.setPositiveButton("OK", null);
-                alert.show();
-
-            } catch (IOException e) {
-                Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                        "Oops! Image could not be saved. Do you have enough space in your device2?", Toast.LENGTH_SHORT);
-                unsavedToast.show();
-                e.printStackTrace();
-            }
-
-
-            if (imgSaved != null) {
-                Toast savedToast = Toast.makeText(getApplicationContext(),
-                        "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
-                savedToast.show();
-            }
-
-            customView.destroyDrawingCache();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Uh Oh!");
+            alert.setMessage("Oops! Image could not be saved. Do you have enough space in your device?1");
+            alert.setPositiveButton("OK", null);
+            alert.show();
 
         }
 
 
+        if (imgSaved != null) {
+            Toast savedToast = Toast.makeText(getApplicationContext(),
+                    "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+            savedToast.show();
+        }
 
+        customView.destroyDrawingCache();
 
+    }
+
+    private void checkSavePermission() {
+        Dexter.withActivity(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            saveThisDrawing();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Permissions are not granted!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<com.karumi.dexter.listener.PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
 
 
     private void shareDrawing() {
