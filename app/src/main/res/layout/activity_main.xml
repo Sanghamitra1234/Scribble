@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_layout"
+        android:background="@color/custom"
         android:layout_marginTop="0dp" />
     <!--
         <android.support.v7.widget.Toolbar
@@ -38,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:background="@color/colorPrimary"
         android:padding="8dp"
         android:paddingLeft="16dp"
@@ -72,13 +74,26 @@
 
         <ImageButton
             android:id="@+id/ib_erase"
-            android:layout_width="0dp"
+            android:layout_width="10dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:padding="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_eraser_white_24dp" />
+            android:src="@drawable/ic_eraser_white_24dp"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/ib_noerase"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_eraser_black_24dp" />
+
 
         <ImageButton
             android:id="@+id/ib_color"

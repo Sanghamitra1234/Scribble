@@ -2,45 +2,31 @@ package com.example.sang.scribble;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ShareCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.PermissionRequest;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,16 +38,14 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-import static com.example.sang.scribble.R.menu.menu_action;
-
 
 public class MainActivity extends AppCompatActivity {
+    Bitmap finalImage;
+    CoordinatorLayout coordinatorLayout;
     //private BottomNavigationView bottomNavigationView;
     private Toolbar mToolbar_bottom;
     private Toolbar toolbar;
     private customView customView;
-    Bitmap finalImage;
-    CoordinatorLayout coordinatorLayout;
 
     public MainActivity() {
     }
@@ -89,22 +73,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setBottomBar() {
-        ImageButton ib_share, ib_save, ib_delete, ib_erase, ib_color;
+        final ImageButton ib_share, ib_save, ib_delete, ib_erase, ib_color,ib_noerase;
         ib_share = findViewById(R.id.ib_share);
         ib_save = findViewById(R.id.ib_save);
         ib_delete = findViewById(R.id.ib_delete);
         ib_erase = findViewById(R.id.ib_erase);
         ib_color = findViewById(R.id.ib_color);
+        ib_noerase=findViewById(R.id.ib_noerase);
         ib_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 shareDrawing();
+                //customView.onClickUndo();
             }
         });
         ib_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            checkSavePermission();
+                checkSavePermission();
             }
         });
         ib_delete.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +102,11 @@ public class MainActivity extends AppCompatActivity {
         ib_erase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ib_noerase.setVisibility(View.VISIBLE);
+                ib_erase.setVisibility(View.GONE);
                 customView.erase(true);
+                ib_color.setClickable(false);
+
             }
         });
         ib_color.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
                 openColorPicker();
             }
         });
+        ib_noerase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ib_color.setClickable(true);
+                ib_noerase.setVisibility(View.GONE);
+                ib_erase.setVisibility(View.VISIBLE);
+                customView.noterase(true);
+            }
+        });
+
 
     }
 
@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChooseColor(int position, int color) {
                 customView.setPaintColor(color);
-                // customView.setPrev_paintColor(color);
             }
 
             @Override

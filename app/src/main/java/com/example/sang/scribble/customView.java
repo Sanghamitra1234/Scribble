@@ -1,32 +1,24 @@
 package com.example.sang.scribble;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class customView extends View {
     private Path drawPath;
     private Paint drawPaint;
+    public   int selectedColor;
     private Paint canvasPaint;
     public int paintColor,prev_paintColor;
     private Canvas drawCanvas;
@@ -36,14 +28,17 @@ public class customView extends View {
 
     private ArrayList<Path> paths = new ArrayList<Path>();
     private ArrayList<Path> undonePaths = new ArrayList<Path>();
+    private ArrayList<Integer> colors = new ArrayList<Integer>();
+    private ArrayList<Integer> colorsWith = new ArrayList<Integer>();
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 4;
 
+
     public void init() {
-        paintColor = 0xFF660000;
+        selectedColor=getResources().getColor(R.color.col);
         brushSize = getResources().getInteger(R.integer.medium_size);
         lastBrushSize = brushSize;
-        prev_paintColor=paintColor;
+        paintColor=0xFF000000;
 
         drawPath = new Path();
         drawPaint = new Paint();
@@ -56,24 +51,22 @@ public class customView extends View {
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+}
 
-
-
-    }
-
+    @SuppressLint("ResourceAsColor")
     protected void onDraw(Canvas canvas) {
 
        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
+      canvas.drawPath(drawPath, drawPaint);
+      paths.add(drawPath);
 
-
-    }
+}
 
     public void setPaintColor(int color) {
 
         this.drawPaint.setColor(color);
         this.paintColor=color;
-        //canvasPaint.setColor(paintColor);
+        canvasPaint.setColor(paintColor);
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -110,7 +103,7 @@ public class customView extends View {
             default:
                 return false;
         }
-        //invalidate();
+        invalidate();
         return true;
     }
 
@@ -151,29 +144,24 @@ public class customView extends View {
         }
 
     }
-
-
     public void eraseAll() {
-
         drawPath = new Path();
         paths.clear();
         drawCanvas.drawColor(Color.WHITE);
         invalidate();
     }
-
-
-
     public void erase(boolean isErase) {
         if(isErase)
            drawPaint.setColor(Color.WHITE);
-
         invalidate();
     }
 
-
-
-
-   public customView(Context context, @Nullable AttributeSet attrs) {
+    public void noterase(boolean notisErase) {
+        if(notisErase)
+            drawPaint.setColor(paintColor);
+        invalidate();
+    }
+    public customView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
