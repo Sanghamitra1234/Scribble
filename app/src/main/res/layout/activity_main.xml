@@ -22,8 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_layout"
-        android:background="@color/custom"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="0dp"
+        android:background="@color/custom" />
     <!--
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_bottom"
@@ -34,75 +34,63 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             />
             -->
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
-        android:padding="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
-        <ImageButton
-            android:id="@+id/ib_share"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:src="@drawable/ic_share_black_24dp" />
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-        <ImageButton
-            android:id="@+id/ib_save"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:src="@drawable/ic_save_black_24dp" />
+            <ImageButton
+                android:id="@+id/ib_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:src="@drawable/ic_delete_black_24dp" />
 
-        <ImageButton
-            android:id="@+id/ib_delete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:src="@drawable/ic_delete_black_24dp" />
+            <ImageButton
+                android:id="@+id/ib_erase"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_eraser_white_24dp"
+                android:visibility="visible" />
 
-        <ImageButton
-            android:id="@+id/ib_erase"
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_eraser_white_24dp"
-            android:visibility="visible" />
-
-        <ImageButton
-            android:id="@+id/ib_noerase"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_eraser_black_24dp" />
+            <ImageButton
+                android:id="@+id/ib_noerase"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_eraser_black_24dp"
+                android:visibility="gone" />
 
 
-        <ImageButton
-            android:id="@+id/ib_color"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:src="@drawable/ic_color_lens_black_24dp" />
+            <ImageButton
+                android:id="@+id/ib_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:src="@drawable/ic_color_lens_black_24dp" />
 
-    </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
 </RelativeLayout>
