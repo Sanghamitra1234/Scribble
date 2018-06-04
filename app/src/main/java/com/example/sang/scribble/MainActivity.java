@@ -18,6 +18,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -73,26 +75,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setBottomBar() {
-        final ImageButton ib_share, ib_save, ib_delete, ib_erase, ib_color,ib_noerase;
-        ib_share = findViewById(R.id.ib_share);
-        ib_save = findViewById(R.id.ib_save);
+        final ImageButton ib_delete, ib_erase, ib_color, ib_noerase;
         ib_delete = findViewById(R.id.ib_delete);
         ib_erase = findViewById(R.id.ib_erase);
         ib_color = findViewById(R.id.ib_color);
-        ib_noerase=findViewById(R.id.ib_noerase);
-        ib_share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareDrawing();
-                //customView.onClickUndo();
-            }
-        });
-        ib_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkSavePermission();
-            }
-        });
+        ib_noerase = findViewById(R.id.ib_noerase);
+
+
         ib_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,35 +116,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    private void handleDrawingIconTouched(int itemId) {
-        switch (itemId) {
-            case R.id.action_delete:
-                deleteDialog();
-                break;
-            case R.id.action_erase:
-
-                customView.erase(true);
-                break;
-            case R.id.action_color:
-                openColorPicker();
-                break;
-            case R.id.action_save:
-                saveThisDrawing();
-                break;
-            case R.id.action_share:
-                // customView.onClickUndo();
-                shareDrawing();
-                break;
-
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                checkSavePermission();
+                return true;
+            case R.id.action_share:
+                // customView.onClickUndo();
+                shareDrawing();
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void deleteDialog() {
