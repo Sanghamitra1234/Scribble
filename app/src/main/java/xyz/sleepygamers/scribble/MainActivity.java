@@ -1,4 +1,4 @@
-package com.example.sang.scribble;
+package xyz.sleepygamers.scribble;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
         File imagePath = new File(this.getCacheDir(), "images");
         File newFile = new File(imagePath, "image.jpg");
-        Uri contentUri = FileProvider.getUriForFile(this, "com.example.sang.scribble.fileprovider", newFile);
+        Uri contentUri = FileProvider.getUriForFile(this, "xyz.sleepygamers.scribble.fileprovider", newFile);
 
 
         if (contentUri != null) {

@@ -1,4 +1,5 @@
-package com.example.sang.scribble;
+
+package xyz.sleepygamers.scribble;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -135,7 +136,7 @@ public class customView extends View {
 
     public void onClickUndo() {
         if (paths.size() > 0) {
-         
+
         } else {
             Toast.makeText(getContext(), "Undo unknown", Toast.LENGTH_SHORT)
                     .show();

@@ -17,7 +17,7 @@
 
     -->
 
-    <com.example.sang.scribble.customView
+    <xyz.sleepygamers.scribble.customView
         android:id="@+id/custom_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,13 +39,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
         android:background="@color/colorPrimary"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:paddingRight="16dp"
+        tools:ignore="RtlCompat">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="368dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal"
@@ -53,41 +54,45 @@
 
             <ImageButton
                 android:id="@+id/ib_delete"
-                android:layout_width="wrap_content"
+                android:layout_width="102dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:background="@android:color/transparent"
                 android:padding="8dp"
                 android:src="@drawable/ic_delete_black_24dp" />
 
             <ImageButton
-                android:id="@+id/ib_erase"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_eraser_white_24dp"
-                android:visibility="visible" />
-
-            <ImageButton
                 android:id="@+id/ib_noerase"
-                android:layout_width="wrap_content"
+                android:layout_width="125dp"
                 android:layout_height="match_parent"
+                android:layout_weight="0"
                 android:background="@android:color/transparent"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
+                android:padding="9dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_eraser_black_24dp"
                 android:visibility="gone" />
 
 
             <ImageButton
+                android:id="@+id/ib_erase"
+                android:layout_width="125dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                android:padding="9dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_eraser_white_24dp"
+                android:visibility="visible" />
+
+            <ImageButton
                 android:id="@+id/ib_color"
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:background="@android:color/transparent"
                 android:padding="8dp"
+                android:paddingRight="10dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_color_lens_black_24dp" />
 
         </LinearLayout>
